@@ -1,0 +1,111 @@
+[core]
+    pager = less -FRSX
+	editor = vim
+	excludesfile = ~/.gitignore_global
+	#compression = 0
+
+# [user] # TODO change this to your own!
+# 	name = Javi Aguilar
+# 	email = 122741+itsjavi@users.noreply.github.com
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[color]
+	ui = true
+
+[http]
+	postBuffer = 524288000
+	# maxRequestBuffer = 100M
+
+[push]
+    default = current
+
+[pull]
+    default = current
+	rebase = true
+
+[alias]
+	# prints the name of the remote branch
+	remote-ref = "rev-parse --abbrev-ref --symbolic-full-name @{u}"
+
+	# prints the name of the local branch
+	local-ref = "rev-parse --abbrev-ref HEAD"
+
+	# prints the name of the branch the current one is created from
+	parent-ref = "!git show-branch | grep '*' | grep -v \"$(git rev-parse --abbrev-ref HEAD)\" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//' #"
+
+	# Shortcuts:
+	a = "!f(){ git add -A && git s; }; f"
+	b = branch
+	c = commit
+	co = checkout
+	d = "diff"
+	f = "fetch -a"
+	l = "!f(){ git log --oneline $(git local-ref) $*; }; f"
+	r = "!f(){ git l && git reb $*; }; f"
+	s = status
+
+	# commits the current changes appending them to the previous commit
+	fixup = "commit --amend --no-edit"
+
+	# forces a push, but fails if the remote has new commits that are not in local
+	puff = "push --force-with-lease"
+
+    # Resets the all local branch changes and commit list to the match the remote origin branch
+	resetup = "!f(){ git reset --hard $(git remote-ref); }; f"
+
+	# Rebase the given number of commits interactively
+	rebi = "!f(){ git rebase -i HEAD~$@; }; f"
+
+	# Rebase all the commits of the current branch since the parent branch
+	reb = "!f(){ git rebase -i ${1:-$(git parent-ref)}; }; f"
+
+	reba = "rebase --abort"
+	rebc = "rebase --continue"
+	rebs = "rebase --skip"
+
+	cherra = "cherry-pick --abort"
+	cherrc = "cherry-pick --continue"
+	cherrs = "cherry-pick --skip"
+
+	chauthor = "!f(){ git commit --amend --no-edit --author=\"${@}\";  }; f"
+
+	# Pull the origin, rebasing locally. Usually this prevents having to deal with conflicts that can be resolved automatically.
+	pull-rebase = "pull --rebase"
+
+	# Pull and rebase another branch and return to the current one
+	pull-rebase-back = "!f(){ CURR_BRANCH=$(git local-ref); git checkout ${1:-develop}; git pull-rebase; git checkout $CURR_BRANCH;  }; f"
+
+	# Pull and rebase current branch on top of develop. This is the cleanest way to rebase a working branch.
+	tipbase= "!f(){ git rebase origin/${1:-develop}; }; f"
+
+	# Same as tipbase, but first it pulls from develop to have it updated before rebasing.
+	updtip= "!f(){ git pull-rebase-back ${1:-develop} && git tipbase ${1:-develop}; }; f"
+
+	# Changes the base branch of the current local branch
+	chbase= "!f(){ git rebase --onto $1 $(git parent-ref) $(git local-ref); }; f"
+
+	# Same as tipbase, but rebases on top if master instead of develop.
+	tipbase-master= "!f(){ git rebase origin/${1:-master}; }; f"
+
+	# Same as updtip, but rebases on top if master instead of develop.
+	updtip-master= "!f(){ git pull-rebase-back ${1:-master} && git tipbase ${1:-master}; }; f"
+
+    # Log helpers
+	log-mine = "!f(){ git log-ls --author $(git config user.email); }; f"
+	log-graph-tree = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+	log-graph = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+
+	# Prunes tracked branches locally that are not on the remote anymore.
+	prune-gone = "!f(){ git fetch --prune && git remote prune origin; }; f"
+
+	# Show the diff of everything you haven't pushed yet.
+	diff-origin = "!f(){ branch=$(git rev-parse --abbrev-ref HEAD) git diff origin/$branch..HEAD; }; f"
+[init]
+	defaultBranch = main
+[url "git@github.com:"]
+	insteadOf = https://github.com/
