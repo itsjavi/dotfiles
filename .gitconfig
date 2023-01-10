@@ -1,5 +1,5 @@
 [core]
-    pager = less -FRSX
+	pager = less -FRSX
 	editor = vim
 	excludesfile = ~/.gitignore_global
 	#compression = 0
@@ -22,11 +22,20 @@
 	# maxRequestBuffer = 100M
 
 [push]
-    default = current
+	default = current
+	autoSetupRemote = true
+
 
 [pull]
-    default = current
+	default = current
 	rebase = true
+	autoSetupRemote = true
+
+[init]
+	defaultBranch = main
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
 
 [alias]
 	# prints the name of the remote branch
@@ -105,7 +114,4 @@
 
 	# Show the diff of everything you haven't pushed yet.
 	diff-origin = "!f(){ branch=$(git rev-parse --abbrev-ref HEAD) git diff origin/$branch..HEAD; }; f"
-[init]
-	defaultBranch = main
-[url "git@github.com:"]
-	insteadOf = https://github.com/
+
