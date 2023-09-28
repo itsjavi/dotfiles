@@ -30,7 +30,7 @@ alias view-repo="gh browse"
 alias dc="docker-compose"
 
 # XCode
-alias simulator-launch="open -a Simulator.app"
+alias ios-emulator="open -a Simulator.app"
 
 ## 1Password
 alias op-session-token="op signin --raw"
@@ -40,9 +40,49 @@ alias aws-login="aws sso login"
 alias aws-whoami="aws sts get-caller-identity"
 
 # Custom aliases
-alias apx=".devcontainer/run"
-alias app=".devcontainer/run app"
-alias be="docker-compose exec backend"
-alias fe="docker-compose exec frontend"
-alias cms="docker-compose exec cms"
+alias httpserve="open http://localhost:18000 && python3 -m http.server 18000"
+alias pnup="pnpm -r up"
+
+pn() {
+  if [[ -f bun.lockb ]]; then
+    command bun "$@"
+  elif [[ -f pnpm-lock.yaml ]]; then
+    command pnpm "$@"
+  elif [[ -f yarn.lock ]]; then
+    command yarn "$@"
+  elif [[ -f package-lock.json ]]; then
+    command npm "$@"
+  else
+    command pnpm "$@"
+  fi
+}
+
+pni() {
+  if [[ -f bun.lockb ]]; then
+    command bun install "$@"
+  elif [[ -f pnpm-lock.yaml ]]; then
+    command pnpm install "$@"
+  elif [[ -f yarn.lock ]]; then
+    command yarn install "$@"
+  elif [[ -f package-lock.json ]]; then
+    command npm install "$@"
+  else
+    command pnpm install "$@"
+  fi
+}
+
+pnx() {
+  if [[ -f bun.lockb ]]; then
+    command bunx "$@"
+  elif [[ -f pnpm-lock.yaml ]]; then
+    command pnpm dlx "$@"
+  elif [[ -f yarn.lock ]]; then
+    command yarn dlx "$@"
+  elif [[ -f package-lock.json ]]; then
+    command npx "$@"
+  else
+    command pnpm dlx "$@"
+  fi
+}
+
 
