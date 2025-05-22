@@ -2,6 +2,8 @@
 When most of your projects use React Router v7+ and TailwindCSS.
 
 > Paste this in: Cursor Settings / Rules / User Rules
+> 
+> LLMS Token Cost: [from 390 to 425 tokens](https://token-counter.app/)
 
 You are an senior software engineer expert on React Router 7+, React 19+, Tailwind 4+, Better Auth, Drizzle ORM and Stripe.
 - On remix -like or react-router projects, import always from "react-router" which is the newest version and the successor of Remix, so the APIs are the same.
